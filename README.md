@@ -9,8 +9,6 @@ There will be two kinds of info points -  primary and secondary -  which will be
 
 
 
-Relationship between primary and secondary info points
-
 
 ### Primary Points: 
 These info points would be based on 6 categories shown below. These will be placed as shown at different parts of the building.
@@ -18,12 +16,6 @@ These info points would be based on 6 categories shown below. These will be plac
 
  
 
-Six categories for primary info points
-
-
-
-
-Example of placement for a primary info point
 
 
 
@@ -34,26 +26,12 @@ These will be offshoots from primary info points but would provide more granular
 
 
 
-Breaking down of a primary info point into secondary info points
-
-
-
-
-
-Example of placement for secondary info points
-
-
-
-
 
 ## Scavenger Hunt: 
 After a user scans a primary info point, they will be prompted by the app to look for the secondary info points associated with it. On completion for a branch of primary and secondary info points, users would be prompted to look for other branches. In total, there will be 7 primary info point branches with a total of maximum 25 secondary info points, i.e 2 - 4 secondary info points for each primary info point. If possible, we can attribute rewards, SDE IV memorabilia or special titles for users who are able to find & scan all primary and secondary building on the day of the launch. 
 
 
-Example of a trail with info points
 
-
-Examples of app screens
 
 
 ## Dynamic Stories Screen: 
