@@ -22,8 +22,7 @@ The 7 primary info point categories would also act as the basis for information,
 ## Demos/Installations:
 This will be a showcase of nano climate structures and digital installations for the launch. The scope for this is still to be decided.
 
-
-
-
+![alt text]learning_trail_dev/Graphic-01.jpg
+      
 
 
