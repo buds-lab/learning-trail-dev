@@ -35,7 +35,7 @@ class Home extends Component {
         localStorage.petname = myName.name
         //Remove this instance of the petname from the MongoDB
         Meteor.call('petnames.remove', myName._id)
-    }
+      }
     }
   }
 
@@ -58,6 +58,7 @@ class Home extends Component {
         </div>
         <div className='absolute bottom-2 pb3 ph2 w-100 tc z-9999'>
           <Link to='/scan' className='link'>
+            {/* Sorry Naor, I didn't know how to export default with Styles and with Tracker at the same time*/}
             {/*className={classNames(classes.startButton)}*/}
             <Button
               variant='raised'
@@ -74,6 +75,7 @@ class Home extends Component {
   }
 }
 
+//TODO: Get export default with Styles integrated into this
 export default withTracker(() => {
   Meteor.subscribe('petnames');
   return {
