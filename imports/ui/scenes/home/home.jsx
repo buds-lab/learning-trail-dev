@@ -19,9 +19,6 @@ const styles = theme => ({
 
 class Home extends Component {
 
-  componentDidMount(){
-
-  }
 
   //TODO: THis function should be called everytime the user scans a QR code or opens up learning trail
   checkPetNames(){
@@ -47,7 +44,7 @@ class Home extends Component {
   render () {
     //Check if petnames exists
     this.checkPetNames()
-    
+
     const { classes } = this.props
     return (
       <div className='open-sans vh-100 flex flex-column items-center relative'>
