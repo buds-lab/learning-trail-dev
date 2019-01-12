@@ -3,8 +3,11 @@ import classNames from 'classnames'
 import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles'
+import { withTracker} from 'meteor/react-meteor-data'
 
 import TopBar from '../../components/top-bar'
+
+import { PetNamesCollection } from '../../../api/petnames.js'
 
 const styles = theme => ({
   startButton: {
@@ -15,7 +18,36 @@ const styles = theme => ({
 })
 
 class Home extends Component {
+
+  componentDidMount(){
+
+  }
+
+  //TODO: THis function should be called everytime the user scans a QR code or opens up learning trail
+  checkPetNames(){
+    //Check if there is a petname in the local storage if not take one from the MongoDB
+    if(localStorage.petname){
+      console.log("welcome " + localStorage.petname)
+    }
+    else{
+      //Take a petname from the MongoDB
+      var myName = PetNamesCollection.findOne();
+      //need to call an if here to bypass undefined
+      if(myName){
+        // set local storage
+        localStorage.petname = myName.name
+        //Remove this instance of the petname from the MongoDB
+        Meteor.call('petnames.remove', myName._id)
+    }
+    }
+  }
+
+
+
   render () {
+    //Check if petnames exists
+    this.checkPetNames()
+    
     const { classes } = this.props
     return (
       <div className='open-sans vh-100 flex flex-column items-center relative'>
@@ -29,11 +61,11 @@ class Home extends Component {
         </div>
         <div className='absolute bottom-2 pb3 ph2 w-100 tc z-9999'>
           <Link to='/scan' className='link'>
+            {/*className={classNames(classes.startButton)}*/}
             <Button
               variant='raised'
               color='primary'
               size='large'
-              className={classNames(classes.startButton)}
               fullWidth
             >
               <span className='f4 fw3 open-sans'>Start Exploring</span>
@@ -45,4 +77,10 @@ class Home extends Component {
   }
 }
 
-export default withStyles(styles)(Home)
+export default withTracker(() => {
+  Meteor.subscribe('petnames');
+  return {
+    petnames: PetNamesCollection.find({}).fetch(),
+  };
+})(Home)
+

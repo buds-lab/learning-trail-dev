@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check'
 
 
 
@@ -15,6 +16,7 @@ if (Meteor.isServer) {
 	});
 }
 
+//Remove the petname from the MongoDB
 Meteor.methods({
 	'petnames.remove'(petnameId){
 		check(petnameId, String);
