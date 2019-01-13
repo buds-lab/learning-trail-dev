@@ -1,5 +1,5 @@
 import { createMuiTheme } from '@material-ui/core/styles'
-import colors from './colors'
+import { colors } from 'meteor/buds-shared-meteor-ui'
 
 export default createMuiTheme({
   palette: {

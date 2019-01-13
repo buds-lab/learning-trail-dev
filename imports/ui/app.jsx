@@ -6,13 +6,9 @@ import { MuiThemeProvider } from '@material-ui/core/styles'
 import 'tachyons'
 
 import theme from './mui-theme/learning-trail-theme'
-// import MapView from './map-view/map-view'
-// import SignIn from './signin/signin'
-// import QrScanner from './qr-scanner/qr-scanner'
-// import RoomView from './room-view/room-view'
-// import { A2hsProvider } from './context/a2hs-context'
 import Home from './scenes/home/home'
 import Scan from './scenes/scan/scan'
+import Station from './scenes/station/station'
 
 class App extends Component {
   componentDidMount () {
@@ -31,19 +27,9 @@ class App extends Component {
           <Switch>
             <Route exact path='/' component={Home} />
             <Route exact path='/scan' component={Scan} />
+            <Route path='/:trailName/:stationName' component={Station} />
             <Redirect to='/' />
           </Switch>
-        {/*<A2hsProvider>*/}
-            {/*<Switch>*/}
-              {/*<Route exact path='/' component={MapView} />*/}
-              {/*<Route exact path='/signin' component={SignIn} />*/}
-              {/*<Route exact path='/room/:roomName/desk/:deskId/:action' component={QrScanner} />*/}
-              {/*<Route exact path='/reservation/:reservationId/:action' component={QrScanner} />*/}
-              {/*<Route path='/room/:roomName' component={RoomView} />*/}
-              {/*<Route exact path='/scan' component={QrScanner} />*/}
-
-            {/*</Switch>*/}
-        {/*</A2hsProvider>*/}
         </Router>
       </MuiThemeProvider>
     )
