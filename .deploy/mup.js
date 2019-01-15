@@ -23,7 +23,7 @@ module.exports = {
 
     env: {
       // If you are using ssl, it needs to start with https://
-      ROOT_URL: 'https://learning-trail.io',
+      ROOT_URL: 'https://www.learning-trail.io',
       MONGO_URL: 'mongodb://mongodb/meteor',
       MONGO_OPLOG_URL: 'mongodb://mongodb/local',
     },
@@ -49,12 +49,13 @@ module.exports = {
   // Use the proxy to setup ssl or to route requests to the correct
   // app when there are several apps
 
-  // proxy: {
-  //   domains: 'mywebsite.com,www.mywebsite.com',
+  proxy: {
+    domains: 'learning-trail.io,www.learning-trail.io',
 
-  //   ssl: {
-  //     // Enable Let's Encrypt
-  //     letsEncryptEmail: 'email@domain.com'
-  //   }
-  // }
+    ssl: {
+      // Enable Let's Encrypt
+      letsEncryptEmail: 'naor@net-comet.com',
+      forceSSL: true
+    }
+  }
 };
