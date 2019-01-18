@@ -3,12 +3,27 @@ import InfoOutlineIcon from '@material-ui/icons/InfoOutlined'
 import NearMeIcon from '@material-ui/icons/NearMe'
 import CropFreeIcon from '@material-ui/icons/CropFree'
 import Button from '@material-ui/core/Button'
-import { SiteTabbedLayout, InfoTab } from 'meteor/buds-shared-meteor-ui'
+import { SiteTabbedLayout, InfoTab, FeedbackPanel } from 'meteor/buds-shared-meteor-ui'
 
 class Station extends Component {
+  constructor () {
+    super(...arguments)
+    this.state = {
+      doShowFeedback: false
+    }
+  }
+
+  componentDidMount () {
+    setTimeout(() => {
+      this.setState({
+        doShowFeedback: true
+      })
+    }, 1e4)
+  }
   render () {
     const { match, history } = this.props
     const { trailName, stationName } = match.params
+    const { doShowFeedback } = this.state
     return (
       <SiteTabbedLayout
         title={trailName.split('_').join(' ')}
@@ -49,6 +64,11 @@ class Station extends Component {
             <CropFreeIcon />
           </Button>
         </div>
+        <FeedbackPanel
+          roomName={stationName}
+          doShowFeedback={doShowFeedback}
+          onFeedbackDone={() => this.setState({ doShowFeedback: false })}
+        />
       </SiteTabbedLayout>
     )
   }
