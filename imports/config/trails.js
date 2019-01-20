@@ -1,8 +1,8 @@
 export const trailsDefs = [
   {
-    name: 'BIOPHILIC TRAIL',
+    name: 'BIOPHILIC DESIGN TRAIL',
     stations: [
-      'BIOPHILIC',
+      'BIOPHILIC DESIGN TRAIL',
       'NATURE IN PLACE',
       'NATURE OF PLACE',
       'MATERIALITY',
