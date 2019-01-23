@@ -140,7 +140,7 @@ class Station extends Component {
             label: 'TRAIL',
             iconEl: <NearMeIcon />,
             tabEl: (
-              <div key={2} className='flex flex-column pt2 pl4 bg-white overflow-auto pb4'>
+              <div key={2} className='flex flex-column pt2 pl4 bg-white overflow-auto pb7'>
                 <LeadingLine />
                 {_.flatten(trailDef.stations.map((thisStation, index) => [
                   <WaypointCircle key={'waypoint ' + index} isActive={thisStation === stationNameDesnaked} />,
