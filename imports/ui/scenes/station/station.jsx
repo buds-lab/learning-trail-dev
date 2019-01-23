@@ -15,6 +15,7 @@ import Button from '@material-ui/core/Button'
 import { SiteTabbedLayout, InfoTab, FeedbackPanel } from 'meteor/buds-shared-meteor-ui'
 import { trailsDefs } from '/imports/config/trails'
 import StationPunchcards, { collectionName } from '/imports/api/station-punchcards'
+import StationCharter from '../../components/station-charter'
 
 // from: https://stackoverflow.com/questions/9083037/convert-a-number-into-a-roman-numeral-in-javascript
 function romanize (num) {
@@ -101,7 +102,8 @@ class Station extends Component {
   constructor () {
     super(...arguments)
     this.state = {
-      doShowFeedback: false
+      doShowFeedback: false,
+      doShowCharter: false
     }
   }
 
@@ -112,10 +114,17 @@ class Station extends Component {
       })
     }, 1e4)
   }
+  showCharter = (doShow) => () => {
+    setTimeout(() => {
+      this.setState({
+        doShowCharter: doShow
+      })
+    }, 200)
+  }
   render () {
     const { match, history, punchcards } = this.props
     const { trailName, stationName } = match.params
-    const { doShowFeedback } = this.state
+    const { doShowFeedback, doShowCharter } = this.state
     const trailNameDesnaked = trailName.split('_').join(' ')
     const stationNameDesnaked = stationName.split('_').join(' ')
     const trailDef = trailsDefs.find(def => def.name === trailNameDesnaked)
@@ -153,7 +162,7 @@ class Station extends Component {
         ]}
       >
         <div className='absolute right-1 bottom-2 flex flex-column items-center'>
-          <Button variant='fab' mini style={{backgroundColor: 'white'}}>
+          <Button variant='fab' mini style={{backgroundColor: 'white'}} onClick={this.showCharter(true)}>
             <BeenhereIcon nativeColor='var(--buds-neptune)' />
           </Button>
           <div className='mt4'>
@@ -162,8 +171,14 @@ class Station extends Component {
             </Button>
           </div>
         </div>
+        <StationCharter
+          show={doShowCharter && !doShowFeedback}
+          punchcards={punchcards}
+          currTrailName={trailNameDesnaked}
+          onClose={this.showCharter(false)}
+        />
         <FeedbackPanel
-          roomName={stationName}
+          roomName={`${trailName}->${stationName}`}
           doShowFeedback={doShowFeedback}
           onFeedbackDone={() => this.setState({ doShowFeedback: false })}
         />
