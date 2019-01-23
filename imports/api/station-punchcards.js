@@ -32,30 +32,32 @@ Meteor.methods({
       throw new Meteor.Error('The station name doesn\'t match, or missing from the specified trail')
     }
 
-    const stationIndex = trailDef.stations.indexOf(stationName)
-    const existingPunchcard = StationPunchcards.findOne({ userIdentifier, trailName })
-    if (existingPunchcard) {
-      if (stationIndex !== 0 && !existingPunchcard.stations.includes(trailDef.stations[stationIndex - 1])) {
-        throw new Meteor.Error(`Must check in to the stations in the correct order, ${trailDef.stations[stationIndex - 1]} is before the current one`)
-      }
-      if (existingPunchcard.stations.includes(stationName)) {
-        console.log(`${userIdentifier} already checked in to ${stationName}`)
+    if (Meteor.isServer) {
+      const stationIndex = trailDef.stations.indexOf(stationName)
+      const existingPunchcard = StationPunchcards.findOne({ userIdentifier, trailName })
+      if (existingPunchcard) {
+        if (stationIndex !== 0 && !existingPunchcard.stations.includes(trailDef.stations[stationIndex - 1])) {
+          throw new Meteor.Error(`Must check in to the stations in the correct order, ${trailDef.stations[stationIndex - 1]} is before the current one`)
+        }
+        if (existingPunchcard.stations.includes(stationName)) {
+          console.log(`${userIdentifier} already checked in to ${stationName}`)
+        } else {
+          StationPunchcards.update({_id: existingPunchcard._id}, {
+            $push: {
+              stations: stationName
+            }
+          })
+        }
       } else {
-        StationPunchcards.update({_id: existingPunchcard._id}, {
-          $push: {
-            stations: stationName
-          }
+        if (stationIndex !== 0) throw new Meteor.Error(`Must start the ${trailName} with the first station: ${trailDef.stations[0]}`)
+        StationPunchcards.insert({
+          userIdentifier,
+          trailName,
+          stations: [
+            stationName
+          ]
         })
       }
-    } else {
-      if (stationIndex !== 0) throw new Meteor.Error(`Must start the ${trailName} with the first station: ${trailDef.stations[0]}`)
-      StationPunchcards.insert({
-        userIdentifier,
-        trailName,
-        stations: [
-          stationName
-        ]
-      })
     }
   }
 })
