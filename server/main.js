@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import '/imports/api/station-punchcards'
 import Influx from 'influx';
 
 //import pet name list
