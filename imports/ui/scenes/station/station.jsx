@@ -108,12 +108,16 @@ class Station extends Component {
   }
 
   componentDidMount () {
+
+  const feedbackGroups = ['water', 'library', 'idStudio', 'archStudio']
     setTimeout(() => {
       this.setState({
         doShowFeedback: true
       })
     }, 1e4)
+
   }
+
   showCharter = (doShow) => () => {
     setTimeout(() => {
       this.setState({
