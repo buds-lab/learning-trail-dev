@@ -66,6 +66,7 @@ WaypointCircle.propTypes = {
 
 const StationCard = ({ trailDef, stationIndex, wasVisited }) => {
   const stationSlug = snakeCase(trailDef.stations[stationIndex])
+
   return (
     <div className='mt2 relative flex items-stretch flex-shrink-0'>
       <div className='fl w-10 flex justify-center relative'>
@@ -125,13 +126,17 @@ class Station extends Component {
     }, 200)
   }
 
+
+
   renderContent() {
     const { match, history, punchcards } = this.props
     const { trailName, stationName } = match.params
+    //<iframe key = {1} height = "400" src = "http://www.budslab.org/visual-analytics-project/"> </iframe>
 
     if(true){
       return(
-        <EnergyChart key ={1} />
+        <EnergyChart key = {1} onScroll={console.log("Energy chart element scrolling")} />
+        
         )
 
     }
@@ -157,6 +162,7 @@ class Station extends Component {
     const checkedStations = currPunchcard ? currPunchcard.stations : []
     return (
       <SiteTabbedLayout
+
         title={trailDef.name}
         baseUrl={match.url}
         tabDefs={[
@@ -173,7 +179,7 @@ class Station extends Component {
             label: 'TRAIL',
             iconEl: <NearMeIcon />,
             tabEl: (
-              <div key={2} className='flex flex-column pt2 pl4 bg-white overflow-auto pb7'>
+              <div key={2} className='flex flex-column pt2 pl4 bg-white overflow-auto pb7' >
                 <LeadingLine />
                 {_.flatten(trailDef.stations.map((thisStation, index) => [
                   <WaypointCircle key={'waypoint ' + index} isActive={thisStation === stationNameDesnaked} />,

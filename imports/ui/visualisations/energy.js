@@ -455,7 +455,7 @@ display(data){
   .datum(data)
   .call(plot)
 
-  var scroll = this.scroller()
+  var scroll = this.scroller(this.refs.scrollWindow)
   .container(d3.select('#graphic'));
 
   scroll(d3.selectAll('.step'));
@@ -475,13 +475,16 @@ display(data){
 
 
 componentDidMount() {
+  console.log(this.refs.scrollWindow)
+
+  var scrollWindow = this.refs.scrollWindow
   this.display()
 
 }
 
 
   //Scroller App Functions from now on. I'm pretty clueless
-  scroller() {
+  scroller(scrollWindow) {
     var container = d3.select('body');
     // event dispatcher
     var dispatch = d3.dispatch('active', 'progress');
@@ -499,6 +502,9 @@ componentDidMount() {
     // y coordinate of
     var containerStart = 0;
 
+
+
+
     /**
      * scroll - constructor function.
      * Sets up scroller to monitor
@@ -511,12 +517,15 @@ componentDidMount() {
      
      function scroll(els) {
       sections = els;
-      console.log("window was scrolled")
 
         // when window is scrolled call
         // position. When it is resized
         // call resize.
-        d3.select(window)
+        console.log(scrollWindow)
+        scrollWindow.addEventListener('scroll', function(e) {
+          console.log("window position is " + window.scrollY);
+         });
+        d3.select(ReactDOM.findDOMNode(this))
         .on('scroll.scroller', position)
         .on('resize.scroller', resize);
 
@@ -569,7 +578,7 @@ componentDidMount() {
      */
      function position() {
       var pos = window.pageYOffset - 10 - containerStart;
-      console.log(pos)
+      console.log("working position is" + pos)
       var sectionIndex = d3.bisect(sectionPositions, pos);
       sectionIndex = Math.min(sections.size() - 1, sectionIndex);
 
@@ -614,10 +623,10 @@ componentDidMount() {
 
   render(){
   	return(
-     <div>	
-      <div id ="graphic">
-        <div id = "sections" className = "relative dib w-25 z-90">
-          <section className = "step mb7">
+     <div ref = "scrollWindow" >	
+      <div id ="graphic" onScroll = {console.log("Scroller is working properly")}>
+        <div id = "sections" className = "relative dib w-25 z-90" >
+          <section className = "step mb7" >
             <div className = "b">
               Reference Building
             </div>
