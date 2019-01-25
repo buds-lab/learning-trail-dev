@@ -17,6 +17,9 @@ import { trailsDefs } from '/imports/config/trails'
 import StationPunchcards, { collectionName } from '/imports/api/station-punchcards'
 import StationCharter from '../../components/station-charter'
 
+//d3 visualisations
+import EnergyChart from "../../visualisations/energy.js"
+
 // from: https://stackoverflow.com/questions/9083037/convert-a-number-into-a-roman-numeral-in-javascript
 function romanize (num) {
   if (isNaN(num)) return NaN
@@ -121,6 +124,27 @@ class Station extends Component {
       })
     }, 200)
   }
+
+  renderContent() {
+    const { match, history, punchcards } = this.props
+    const { trailName, stationName } = match.params
+
+    if(true){
+      return(
+        <EnergyChart key ={1} />
+        )
+
+    }
+    else {
+      return(
+      <InfoTab key={1} contentUrl={`/assets/trails/${trailName}/${stationName}/${stationName}.html`} />
+      )
+    }
+
+    
+
+  }
+
   render () {
     const { match, history, punchcards } = this.props
     const { trailName, stationName } = match.params
@@ -141,7 +165,7 @@ class Station extends Component {
             label: 'STATION',
             iconEl: <InfoOutlineIcon />,
             tabEl: (
-              <InfoTab key={1} contentUrl={`/assets/trails/${trailName}/${stationName}/${stationName}.html`} />
+              this.renderContent()
             )
           },
           {

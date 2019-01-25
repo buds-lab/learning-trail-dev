@@ -1,0 +1,8 @@
+{
+	"influx": {
+		"database" : "testingDB",
+		"user": "comfort-process",
+		"password": "buddyCOMF2k18",
+		"host": "hueylewis-ca0b68b3.influxcloud.net"
+	}
+}
