@@ -29,7 +29,7 @@ export const trailsDefs = [
       'WELLNESS TRAIL',
       'LIGHTING',
       'AIR',
-      'SUSTAINABLE NUS',
+      'NUS POLICY',
       'MOVEMENT',
       'FUTURE TECHNOLOGIES 1',
       'FUTURE TECHNOLOGIES 2',
