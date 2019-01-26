@@ -15,26 +15,14 @@ import Button from '@material-ui/core/Button'
 import { SiteTabbedLayout, InfoTab, FeedbackPanel } from 'meteor/buds-shared-meteor-ui'
 import { trailsDefs } from '/imports/config/trails'
 import StationPunchcards, { collectionName } from '/imports/api/station-punchcards'
+import { romanize } from '/imports/util/formatters'
 import StationCharter from '../../components/station-charter'
 
-//d3 visualisations
 import EnergyChart from "../../visualisations/energy.js"
 
-// from: https://stackoverflow.com/questions/9083037/convert-a-number-into-a-roman-numeral-in-javascript
-function romanize (num) {
-  if (isNaN(num)) return NaN
-  const digits = String(+num).split('')
-  const key = [
-    '', 'C', 'CC', 'CCC', 'CD', 'D', 'DC', 'DCC', 'DCCC', 'CM', '', 'X', 'XX', 'XXX', 'XL', 'L', 'LX', 'LXX',
-    'LXXX', 'XC', '', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'
-  ]
-  let roman = ''
-  let i = 3
-  while (i--) roman = (key[+digits.pop() + (i * 10)] || '') + roman
-  return Array(+digits.join('') + 1).join('M') + roman
-}
 
 const snakeCase = str => str.split(' ').join('_')
+const desnakeCase = str => str.split('_').join(' ')
 
 const LeadingLine = () => (
   <div className='flex-shrink-0'>
@@ -75,7 +63,7 @@ const StationCard = ({ trailDef, stationIndex, wasVisited }) => {
       <div className='fl w-80 pv1'>
         <div className='br4 cust-shadow-3 pb4 relative'>
           <div className='pt2 pl3 pr1'>
-            <div className='buds-neptune f7 fw6 lh-copy'>
+            <div className='moon-gray f7 fw6 lh-copy'>
               STATION {romanize(stationIndex + 1)}
             </div>
             <div className='gray f6 fw6 lh-copy'>
@@ -87,13 +75,13 @@ const StationCard = ({ trailDef, stationIndex, wasVisited }) => {
           <div
             className={
               'absolute w2 h2 bottom-2 right-1 br-100 ba content-box cust-shadow-3 flex items-center justify-center ' +
-              (wasVisited ? 'bg-buds-yolk b--buds-yolk' : 'bg-white bw1 b--buds-neptune')
+              (wasVisited ? 'bg-buds-yolk b--buds-yolk' : 'bg-white bw1 b--gray')
             }
           >
             {wasVisited ? (
               <CheckIcon nativeColor='white' />
             ) : (
-              <CloseIcon nativeColor='var(--buds-neptune)' />
+              <CloseIcon nativeColor='#777' />
             )}
           </div>
         </div>
@@ -117,6 +105,16 @@ class Station extends Component {
         doShowFeedback: true
       })
     }, 1e4)
+
+    setTimeout(() => {
+      const userIdentifier = localStorage.getItem('anonId')
+      const { trailName, stationName } = this.props.match.params
+      Meteor.call(`${collectionName}.checkIn`, userIdentifier, desnakeCase(trailName), desnakeCase(stationName), err => {
+        if (err) {
+          console.error('Could not check in to station', err.error)
+        }
+      })
+    }, 500)
   }
   showCharter = (doShow) => () => {
     setTimeout(() => {
@@ -154,8 +152,8 @@ class Station extends Component {
     const { match, history, punchcards } = this.props
     const { trailName, stationName } = match.params
     const { doShowFeedback, doShowCharter } = this.state
-    const trailNameDesnaked = trailName.split('_').join(' ')
-    const stationNameDesnaked = stationName.split('_').join(' ')
+    const trailNameDesnaked = desnakeCase(trailName)
+    const stationNameDesnaked = desnakeCase(stationName)
     const trailDef = trailsDefs.find(def => def.name === trailNameDesnaked)
     if (!trailDef) return <Redirect to='/scan' />
     const currPunchcard = punchcards.find(pc => pc.trailName === trailNameDesnaked)

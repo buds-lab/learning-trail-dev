@@ -33,12 +33,8 @@ Meteor.methods({
     }
 
     if (Meteor.isServer) {
-      const stationIndex = trailDef.stations.indexOf(stationName)
       const existingPunchcard = StationPunchcards.findOne({ userIdentifier, trailName })
       if (existingPunchcard) {
-        if (stationIndex !== 0 && !existingPunchcard.stations.includes(trailDef.stations[stationIndex - 1])) {
-          throw new Meteor.Error(`Must check in to the stations in the correct order, ${trailDef.stations[stationIndex - 1]} is before the current one`)
-        }
         if (existingPunchcard.stations.includes(stationName)) {
           console.log(`${userIdentifier} already checked in to ${stationName}`)
         } else {
@@ -49,7 +45,6 @@ Meteor.methods({
           })
         }
       } else {
-        if (stationIndex !== 0) throw new Meteor.Error(`Must start the ${trailName} with the first station: ${trailDef.stations[0]}`)
         StationPunchcards.insert({
           userIdentifier,
           trailName,
