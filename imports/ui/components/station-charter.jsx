@@ -5,7 +5,7 @@ import { GenericBottomPanel } from 'meteor/buds-shared-meteor-ui'
 
 const StationCharter = ({ punchcards, currTrailName, show, onClose }) => (
   <GenericBottomPanel show={show} onClose={onClose}>
-    <div className='pv3 buds-neptune f4 lh-title bw01 bb b--grey-chateau tc fw7 open-sans'>
+    <div className='pv3 gray f4 lh-title bw01 bb b--grey-chateau tc fw7 open-sans'>
       Station Charter
     </div>
     <div className='flex mt1 pt3 pb4 mb2 ph2 overflow-auto'>

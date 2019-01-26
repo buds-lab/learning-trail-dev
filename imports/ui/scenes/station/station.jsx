@@ -60,7 +60,7 @@ const StationCard = ({ trailDef, stationIndex, wasVisited }) => {
       <div className='fl w-80 pv1'>
         <div className='br4 cust-shadow-3 pb4 relative'>
           <div className='pt2 pl3 pr1'>
-            <div className='buds-neptune f7 fw6 lh-copy'>
+            <div className='moon-gray f7 fw6 lh-copy'>
               STATION {romanize(stationIndex + 1)}
             </div>
             <div className='gray f6 fw6 lh-copy'>
@@ -72,13 +72,13 @@ const StationCard = ({ trailDef, stationIndex, wasVisited }) => {
           <div
             className={
               'absolute w2 h2 bottom-2 right-1 br-100 ba content-box cust-shadow-3 flex items-center justify-center ' +
-              (wasVisited ? 'bg-buds-yolk b--buds-yolk' : 'bg-white bw1 b--buds-neptune')
+              (wasVisited ? 'bg-buds-yolk b--buds-yolk' : 'bg-white bw1 b--gray')
             }
           >
             {wasVisited ? (
               <CheckIcon nativeColor='white' />
             ) : (
-              <CloseIcon nativeColor='var(--buds-neptune)' />
+              <CloseIcon nativeColor='#777' />
             )}
           </div>
         </div>
