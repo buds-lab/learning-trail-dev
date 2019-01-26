@@ -7,8 +7,6 @@ export const trailsDefs = [
       'NATURE OF PLACE',
       'MATERIALITY',
       'FUTURE TECHNOLOGIES 1',
-      'FUTURE TECHNOLOGIES 2',
-      'FUTURE TECHNOLOGIES 3'
     ]
   },
   {
@@ -18,9 +16,6 @@ export const trailsDefs = [
       'ABC WATER PROGRAMME',
       'WATER FEATURE',
       'BIO RETENTION BASIN',
-      'FUTURE TECHNOLOGIES 1',
-      'FUTURE TECHNOLOGIES 2',
-      'FUTURE TECHNOLOGIES 3'
     ]
   },
   {
@@ -46,7 +41,6 @@ export const trailsDefs = [
       'LANDSCAPE DESIGN',
       'FUTURE TECHNOLOGIES 1',
       'FUTURE TECHNOLOGIES 2',
-      'FUTURE TECHNOLOGIES 3'
     ]
   },
   {
@@ -58,7 +52,6 @@ export const trailsDefs = [
       'ENHANCED IEQ',
       'FUTURE TECHNOLOGIES 1',
       'FUTURE TECHNOLOGIES 2',
-      'FUTURE TECHNOLOGIES 3'
     ]
   },
   {
@@ -69,8 +62,6 @@ export const trailsDefs = [
       'DEMAND REDUCTION',
       'CO WORKING',
       'FUTURE TECHNOLOGIES 1',
-      'FUTURE TECHNOLOGIES 2',
-      'FUTURE TECHNOLOGIES 3'
     ]
   }
 ]
