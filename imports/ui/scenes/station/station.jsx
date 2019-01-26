@@ -16,6 +16,7 @@ import { SiteTabbedLayout, InfoTab, FeedbackPanel } from 'meteor/buds-shared-met
 import { trailsDefs } from '/imports/config/trails'
 import StationPunchcards, { collectionName } from '/imports/api/station-punchcards'
 import StationCharter from '../../components/station-charter'
+import { feedbackDefs } from '/imports/config/feedback-groups'
 
 // from: https://stackoverflow.com/questions/9083037/convert-a-number-into-a-roman-numeral-in-javascript
 function romanize (num) {
@@ -109,13 +110,30 @@ class Station extends Component {
 
   componentDidMount () {
 
-  const feedbackGroups = ['water', 'library', 'idStudio', 'archStudio']
-    setTimeout(() => {
-      this.setState({
-        doShowFeedback: true
-      })
-    }, 1e4)
+    const { match, history, punchcards } = this.props
+    const { trailName, stationName } = match.params
 
+    //check for local storage of feedback groups
+    let userFeedbackGroupsJSON = localStorage.getItem('feedbackGroups')
+    // if not feedback in local storage create new empty array
+    if(!userFeedbackGroupsJSON){
+      userFeedbackGroupsJSON = '[]'
+      localStorage.setItem('feedbackGroups', userFeedbackGroupsJSON)}
+    // parse JSON to array
+    let userFeedbackGroups = JSON.parse(userFeedbackGroupsJSON)
+
+    // if feedback for the current QR code location has not been obtained
+    if(!userFeedbackGroups.includes(feedbackDefs[`${trailName}/${stationName}`])) {
+
+      setTimeout(() => {
+        this.setState({
+          doShowFeedback: true
+        })
+      }, 1e4)
+      // create new array including this location point and set to local storagwe
+      userFeedbackGroups.push(feedbackDefs[`${trailName}/${stationName}`])
+      localStorage.setItem('feedbackGroups', JSON.stringify(userFeedbackGroups))
+    }
   }
 
   showCharter = (doShow) => () => {
