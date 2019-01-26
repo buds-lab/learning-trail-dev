@@ -32,6 +32,7 @@ function romanize (num) {
 }
 
 const snakeCase = str => str.split(' ').join('_')
+const desnakeCase = str => str.split('_').join(' ')
 
 const LeadingLine = () => (
   <div className='flex-shrink-0'>
@@ -113,6 +114,16 @@ class Station extends Component {
         doShowFeedback: true
       })
     }, 1e4)
+
+    setTimeout(() => {
+      const userIdentifier = localStorage.getItem('anonId')
+      const { trailName, stationName } = this.props.match.params
+      Meteor.call(`${collectionName}.checkIn`, userIdentifier, desnakeCase(trailName), desnakeCase(stationName), err => {
+        if (err) {
+          console.error('Could not check in to station', err.error)
+        }
+      })
+    }, 500)
   }
   showCharter = (doShow) => () => {
     setTimeout(() => {
@@ -125,8 +136,8 @@ class Station extends Component {
     const { match, history, punchcards } = this.props
     const { trailName, stationName } = match.params
     const { doShowFeedback, doShowCharter } = this.state
-    const trailNameDesnaked = trailName.split('_').join(' ')
-    const stationNameDesnaked = stationName.split('_').join(' ')
+    const trailNameDesnaked = desnakeCase(trailName)
+    const stationNameDesnaked = desnakeCase(stationName)
     const trailDef = trailsDefs.find(def => def.name === trailNameDesnaked)
     if (!trailDef) return <Redirect to='/scan' />
     const currPunchcard = punchcards.find(pc => pc.trailName === trailNameDesnaked)
