@@ -16,7 +16,7 @@ import { SiteTabbedLayout, InfoTab, FeedbackPanel } from 'meteor/buds-shared-met
 import { trailsDefs } from '/imports/config/trails'
 import StationPunchcards, { collectionName } from '/imports/api/station-punchcards'
 import StationCharter from '../../components/station-charter'
-import { feedbackDefs } from '/imports/config/feedback-groups'
+import { feedbackLocations } from '/imports/config/feedback-locations'
 
 // from: https://stackoverflow.com/questions/9083037/convert-a-number-into-a-roman-numeral-in-javascript
 function romanize (num) {
@@ -123,7 +123,7 @@ class Station extends Component {
     let userFeedbackGroups = JSON.parse(userFeedbackGroupsJSON)
 
     // if feedback for the current QR code location has not been obtained
-    if(!userFeedbackGroups.includes(feedbackDefs[`${trailName}/${stationName}`])) {
+    if(!userFeedbackGroups.includes(feedbackLocations[`${trailName}/${stationName}`])) {
 
       setTimeout(() => {
         this.setState({
@@ -131,7 +131,7 @@ class Station extends Component {
         })
       }, 1e4)
       // create new array including this location point and set to local storagwe
-      userFeedbackGroups.push(feedbackDefs[`${trailName}/${stationName}`])
+      userFeedbackGroups.push(feedbackLocations[`${trailName}/${stationName}`])
       localStorage.setItem('feedbackGroups', JSON.stringify(userFeedbackGroups))
     }
   }

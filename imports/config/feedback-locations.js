@@ -1,4 +1,4 @@
-export const feedbackDefs = {
+export const feedbackLocations = {
   'WATER_TRAIL/WATER_TRAIL': 'water',
   'WATER_TRAIL/ABC_WATER_PROGRAMME': 'water',
   'WATER_TRAIL/WATER_FEATURE': 'water',
