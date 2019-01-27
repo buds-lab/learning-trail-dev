@@ -12,28 +12,14 @@ import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
 import BeenhereIcon from '@material-ui/icons/BeenhereOutlined'
 import Button from '@material-ui/core/Button'
+import ButtonBase from '@material-ui/core/ButtonBase'
 import { SiteTabbedLayout, InfoTab, FeedbackPanel } from 'meteor/buds-shared-meteor-ui'
 import { trailsDefs } from '/imports/config/trails'
 import StationPunchcards, { collectionName } from '/imports/api/station-punchcards'
+import { romanize, desnakeCase, snakeCase } from '/imports/util/formatters'
 import StationCharter from '../../components/station-charter'
+import LocationFinder from '../../components/location-finder'
 import { feedbackLocations } from '/imports/config/feedback-locations'
-
-// from: https://stackoverflow.com/questions/9083037/convert-a-number-into-a-roman-numeral-in-javascript
-function romanize (num) {
-  if (isNaN(num)) return NaN
-  const digits = String(+num).split('')
-  const key = [
-    '', 'C', 'CC', 'CCC', 'CD', 'D', 'DC', 'DCC', 'DCCC', 'CM', '', 'X', 'XX', 'XXX', 'XL', 'L', 'LX', 'LXX',
-    'LXXX', 'XC', '', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'
-  ]
-  let roman = ''
-  let i = 3
-  while (i--) roman = (key[+digits.pop() + (i * 10)] || '') + roman
-  return Array(+digits.join('') + 1).join('M') + roman
-}
-
-const snakeCase = str => str.split(' ').join('_')
-const desnakeCase = str => str.split('_').join(' ')
 
 const LeadingLine = () => (
   <div className='flex-shrink-0'>
@@ -63,41 +49,51 @@ WaypointCircle.propTypes = {
   isEnd: PropTypes.bool
 }
 
-const StationCard = ({ trailDef, stationIndex, wasVisited }) => {
-  const stationSlug = snakeCase(trailDef.stations[stationIndex])
+const StationCard = ({ trailDef, stationIndex, wasVisited, onClick }) => {
+  const stationSlug = snakeCase(trailDef.stations[stationIndex].name)
   return (
     <div className='mt2 relative flex items-stretch flex-shrink-0'>
       <div className='fl w-10 flex justify-center relative'>
         <div className='bl b--moon-gray' />
       </div>
       <div className='fl w-80 pv1'>
-        <div className='br4 cust-shadow-3 pb4 relative'>
-          <div className='pt2 pl3 pr1'>
-            <div className='buds-neptune f7 fw6 lh-copy'>
-              STATION {romanize(stationIndex + 1)}
+        <div className='br4 cust-shadow-3 relative overflow-hidden'>
+          <ButtonBase onClick={onClick}>
+            <div className='tl pb4'>
+              <div className='pt2 pl3 pr1'>
+                <div className='moon-gray f7 fw6 lh-copy'>
+                  STATION {romanize(stationIndex + 1)}
+                </div>
+                <div className='gray f6 fw6 lh-copy'>
+                  {trailDef.stations[stationIndex].name}
+                </div>
+              </div>
+              <img className='w-100 mb3' src={`/assets/trails/${snakeCase(trailDef.name)}/${stationSlug}/${stationSlug}.jpg`} />
+              <div
+                className={
+                  'absolute w2 h2 bottom-2 right-1 br-100 ba content-box cust-shadow-3 flex items-center justify-center ' +
+                  (wasVisited ? 'bg-buds-yolk b--buds-yolk' : 'bg-white bw1 b--gray')
+                }
+              >
+                {wasVisited ? (
+                  <CheckIcon nativeColor='white' />
+                ) : (
+                  <CloseIcon nativeColor='#777' />
+                )}
+              </div>
             </div>
-            <div className='gray f6 fw6 lh-copy'>
-              {trailDef.stations[stationIndex]}
-            </div>
-          </div>
-          {/*<img className='w-100 mb3' src='/home-bg.jpg' />*/}
-          <img className='w-100 mb3' src={`/assets/trails/${snakeCase(trailDef.name)}/${stationSlug}/${stationSlug}.jpg`} />
-          <div
-            className={
-              'absolute w2 h2 bottom-2 right-1 br-100 ba content-box cust-shadow-3 flex items-center justify-center ' +
-              (wasVisited ? 'bg-buds-yolk b--buds-yolk' : 'bg-white bw1 b--buds-neptune')
-            }
-          >
-            {wasVisited ? (
-              <CheckIcon nativeColor='white' />
-            ) : (
-              <CloseIcon nativeColor='var(--buds-neptune)' />
-            )}
-          </div>
+          </ButtonBase>
         </div>
       </div>
     </div>
   )
+}
+
+StationCard.propTypes = {
+  trailDef: PropTypes.object.isRequired,
+  stationIndex: PropTypes.number.isRequired,
+  wasVisited: PropTypes.bool.isRequired,
+  onClick: PropTypes.func
 }
 
 class Station extends Component {
@@ -105,7 +101,8 @@ class Station extends Component {
     super(...arguments)
     this.state = {
       doShowFeedback: false,
-      doShowCharter: false
+      visiblePopPanel: null,
+      finderStationIdx: 0
     }
   }
 
@@ -146,18 +143,17 @@ class Station extends Component {
       })
     }, 500)
   }
-
   showCharter = (doShow) => () => {
     setTimeout(() => {
       this.setState({
-        doShowCharter: doShow
+        visiblePopPanel: doShow ? 'charter' : null
       })
     }, 200)
   }
   render () {
     const { match, history, punchcards } = this.props
     const { trailName, stationName } = match.params
-    const { doShowFeedback, doShowCharter } = this.state
+    const { doShowFeedback, visiblePopPanel, finderStationIdx } = this.state
     const trailNameDesnaked = desnakeCase(trailName)
     const stationNameDesnaked = desnakeCase(stationName)
     const trailDef = trailsDefs.find(def => def.name === trailNameDesnaked)
@@ -185,8 +181,17 @@ class Station extends Component {
               <div key={2} className='flex flex-column pt2 pl4 bg-white overflow-auto pb7'>
                 <LeadingLine />
                 {_.flatten(trailDef.stations.map((thisStation, index) => [
-                  <WaypointCircle key={'waypoint ' + index} isActive={thisStation === stationNameDesnaked} />,
-                  <StationCard key={'card ' + index} trailDef={trailDef} stationIndex={index} wasVisited={checkedStations.includes(thisStation)} />
+                  <WaypointCircle key={'waypoint ' + index} isActive={thisStation.name === stationNameDesnaked} />,
+                  <StationCard
+                    key={'card ' + index}
+                    trailDef={trailDef}
+                    stationIndex={index}
+                    wasVisited={checkedStations.includes(thisStation.name)}
+                    onClick={() => this.setState({
+                      visiblePopPanel: 'finder',
+                      finderStationIdx: index
+                    })}
+                  />
                 ]))}
                 <WaypointCircle isEnd />
               </div>
@@ -205,10 +210,16 @@ class Station extends Component {
           </div>
         </div>
         <StationCharter
-          show={doShowCharter && !doShowFeedback}
+          show={visiblePopPanel === 'charter' && !doShowFeedback}
           punchcards={punchcards}
           currTrailName={trailNameDesnaked}
           onClose={this.showCharter(false)}
+        />
+        <LocationFinder
+          show={visiblePopPanel === 'finder' && !doShowFeedback}
+          onClose={() => this.setState({ visiblePopPanel: null })}
+          trailDef={trailDef}
+          stationIndex={finderStationIdx}
         />
         <FeedbackPanel
           roomName={`${trailName}->${stationName}`}
