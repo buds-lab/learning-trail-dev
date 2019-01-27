@@ -14,7 +14,7 @@ import BeenhereIcon from '@material-ui/icons/BeenhereOutlined'
 import Button from '@material-ui/core/Button'
 import ButtonBase from '@material-ui/core/ButtonBase'
 import { SiteTabbedLayout, InfoTab, FeedbackPanel } from 'meteor/buds-shared-meteor-ui'
-import { trailsDefs } from '/imports/config/trails'
+import { trailsDefs, stationFeedbackMap } from '/imports/config/trails'
 import StationPunchcards, { collectionName } from '/imports/api/station-punchcards'
 import { romanize, desnakeCase, snakeCase } from '/imports/util/formatters'
 import StationCharter from '../../components/station-charter'
@@ -106,15 +106,24 @@ class Station extends Component {
   }
 
   componentDidMount () {
-    setTimeout(() => {
-      this.setState({
-        doShowFeedback: true
-      })
-    }, 1e4)
+    const { trailName, stationName } = this.props.match.params
+
+    //check for local storage of feedback groups
+    this.taggedFeedbackGroups = localStorage.getItem('feedbackGroups') ? JSON.parse(localStorage.getItem('feedbackGroups')) : []
+    this.feedbackGroupName = stationFeedbackMap[`${desnakeCase(trailName)}/${desnakeCase(stationName)}`]
+    
+    // if feedback for the current QR code location has not been obtained
+    if(!this.taggedFeedbackGroups.includes(this.feedbackGroupName)) {
+
+      setTimeout(() => {
+        this.setState({
+          doShowFeedback: true
+        })
+      }, 1e4)
+    }
 
     setTimeout(() => {
       const userIdentifier = localStorage.getItem('anonId')
-      const { trailName, stationName } = this.props.match.params
       Meteor.call(`${collectionName}.checkIn`, userIdentifier, desnakeCase(trailName), desnakeCase(stationName), err => {
         if (err) {
           console.error('Could not check in to station', err.error)
@@ -122,6 +131,15 @@ class Station extends Component {
       })
     }, 500)
   }
+  
+  handleFeedbackDone = () => {
+    this.setState({ doShowFeedback: false })
+    
+    // Only "tagging" the current group after the user actively submitted feedback
+    this.taggedFeedbackGroups.push(this.feedbackGroupName)
+    localStorage.setItem('feedbackGroups', JSON.stringify(this.taggedFeedbackGroups))
+  }
+  
   showCharter = (doShow) => () => {
     setTimeout(() => {
       this.setState({
@@ -203,7 +221,7 @@ class Station extends Component {
         <FeedbackPanel
           roomName={`${trailName}->${stationName}`}
           doShowFeedback={doShowFeedback}
-          onFeedbackDone={() => this.setState({ doShowFeedback: false })}
+          onFeedbackDone={this.handleFeedbackDone}
         />
       </SiteTabbedLayout>
     )
