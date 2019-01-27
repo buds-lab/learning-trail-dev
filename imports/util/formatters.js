@@ -11,3 +11,6 @@ export function romanize (num) {
   while (i--) roman = (key[+digits.pop() + (i * 10)] || '') + roman
   return Array(+digits.join('') + 1).join('M') + roman
 }
+
+export const snakeCase = str => str.split(' ').join('_')
+export const desnakeCase = str => str.split('_').join(' ')

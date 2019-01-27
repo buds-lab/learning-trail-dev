@@ -28,7 +28,7 @@ Meteor.methods({
     if (!trailName) {
       throw new Meteor.Error('The trail name doesn\'t match')
     }
-    if (!trailDef.stations.includes(stationName)) {
+    if (!trailDef.stations.find(s => s.name === stationName)) {
       throw new Meteor.Error('The station name doesn\'t match, or missing from the specified trail')
     }
 
