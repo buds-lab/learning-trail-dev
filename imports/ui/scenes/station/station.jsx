@@ -214,7 +214,11 @@ class Station extends Component {
         />
         <LocationFinder
           show={visiblePopPanel === 'finder' && !doShowFeedback}
-          onClose={() => this.setState({ visiblePopPanel: null })}
+          onClose={() => {
+            setTimeout(() => {
+              this.setState({ visiblePopPanel: null })
+            }, 200)
+          }}
           trailDef={trailDef}
           stationIndex={finderStationIdx}
         />
