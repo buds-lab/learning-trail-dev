@@ -3,7 +3,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/react-meteor-data';
 
-import d3 from 'd3'
+import * as d3 from 'd3'
 
 //Styling
 import 'tachyons'

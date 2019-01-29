@@ -20,6 +20,8 @@ import StationCharter from '../../components/station-charter'
 
 import EnergyChart from "../../visualisations/energy.js"
 
+import ReactDOM from 'react-dom'
+
 
 const snakeCase = str => str.split(' ').join('_')
 const desnakeCase = str => str.split('_').join(' ')
@@ -129,11 +131,15 @@ class Station extends Component {
   renderContent() {
     const { match, history, punchcards } = this.props
     const { trailName, stationName } = match.params
+
+    var el = ReactDOM.findDOMNode(this)
+    console.log(el)
     //<iframe key = {1} height = "400" src = "http://www.budslab.org/visual-analytics-project/"> </iframe>
 
     if(true){
-      return(
-        <EnergyChart key = {1} onScroll={console.log("Energy chart element scrolling")} />
+      ReactDOM.createPortal(
+        <EnergyChart key = {1} onScroll={console.log("Energy chart element scrolling")} />,
+        el
         
         )
 
