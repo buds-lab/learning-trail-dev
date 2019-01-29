@@ -89,13 +89,13 @@ export const trailsDefs = [
       },
       {
         name: 'FUTURE TECHNOLOGIES 2',
-        location: 'Level 3 - Exhibition space',
-        feedbackGroup: 'exhibition'
+        location: 'Level 3 - BEE Hub',
+        feedbackGroup: 'beehub'
       },
       {
         name: 'FUTURE TECHNOLOGIES 3',
-        location: 'Level 3 - BEE Hub',
-        feedbackGroup: 'beehub'
+        location: 'Level 3 - Exhibition space',
+        feedbackGroup: 'exhibition'
       }
     ]
   },
@@ -129,13 +129,13 @@ export const trailsDefs = [
       },
       {
         name: 'FUTURE TECHNOLOGIES 1',
-        location: 'Level 4 - Hot Desking Studio',
-        feedbackGroup: 'l4studio'
+        location: 'Level 4 - Terrace',
+        feedbackGroup: 'l4open'
       },
       {
         name: 'FUTURE TECHNOLOGIES 2',
-        location: 'Level 4 - Terrace',
-        feedbackGroup: 'l4open'
+        location: 'Level 4 - Hot Desking Studio',
+        feedbackGroup: 'l4studio'
       }
     ]
   },
