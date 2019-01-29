@@ -1,9 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { withRouter } from 'react-router-dom'
 import { trailsDefs } from '/imports/config/trails'
+import { snakeCase } from '/imports/util/formatters'
 import { GenericBottomPanel } from 'meteor/buds-shared-meteor-ui'
 
-const StationCharter = ({ punchcards, currTrailName, show, onClose }) => (
+const StationCharter = ({ punchcards, currTrailName, show, onClose, history }) => (
   <GenericBottomPanel show={show} onClose={onClose}>
     <div className='pv3 gray f4 lh-title bw01 bb b--grey-chateau tc fw7 open-sans'>
       Station Charter
@@ -15,6 +17,7 @@ const StationCharter = ({ punchcards, currTrailName, show, onClose }) => (
         return (
           <div key={trail.name} className='flex flex-column w4 overflow-hidden items-center flex-shrink-0'>
             <div
+              onClick={() => history.push(`/${snakeCase(trail.name)}/${snakeCase(trail.stations[0].name)}/trail`)}
               className={
                 'br-100 w3 h3 flex items-center justify-center f4 ' +
                 (trail.name === currTrailName
@@ -39,7 +42,8 @@ StationCharter.propTypes = {
   punchcards: PropTypes.array.isRequired,
   currTrailName: PropTypes.string.isRequired,
   show: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired
 }
 
-export default StationCharter
+export default withRouter(StationCharter)
