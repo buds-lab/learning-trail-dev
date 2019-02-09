@@ -10,6 +10,9 @@ const StationCharter = ({ punchcards, currTrailName, show, onClose, history }) =
     <div className='pv3 gray f4 lh-title bw01 bb b--grey-chateau tc fw7 open-sans'>
       Station Charter
     </div>
+    <div className='gray f7 bw01 b--grey-chateau tc fw7 open-sans'>
+      Your Anonymous ID is: {localStorage.getItem('anonId')}
+    </div>
     <div className='flex mt1 pt3 pb4 mb2 ph2 overflow-auto'>
       {trailsDefs.map(trail => {
         const punchCard = punchcards.find(pc => pc.trailName === trail.name)
