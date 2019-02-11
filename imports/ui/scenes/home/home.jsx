@@ -27,6 +27,9 @@ class Home extends Component {
             <div className='f4 mt1'>
               Welcome to Net - Zero Energy Building at the School of Design & Environment.
             </div>
+            <div className='f6 pt3 b mt1'>
+              Your Anonymous ID Is: {localStorage.getItem('anonId')}
+            </div>
           </div>
         </div>
         <div className='absolute bottom-2 pb3 ph2 w-100 tc z-9999'>
