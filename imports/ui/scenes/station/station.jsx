@@ -12,11 +12,13 @@ import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
 import BeenhereIcon from '@material-ui/icons/BeenhereOutlined'
 import Button from '@material-ui/core/Button'
+import ButtonBase from '@material-ui/core/ButtonBase'
 import { SiteTabbedLayout, InfoTab, FeedbackPanel } from 'meteor/buds-shared-meteor-ui'
-import { trailsDefs } from '/imports/config/trails'
+import { trailsDefs, stationFeedbackMap } from '/imports/config/trails'
 import StationPunchcards, { collectionName } from '/imports/api/station-punchcards'
-import { romanize } from '/imports/util/formatters'
+import { romanize, desnakeCase, snakeCase } from '/imports/util/formatters'
 import StationCharter from '../../components/station-charter'
+
 
 import EnergyChart from "../../visualisations/energy.js"
 
@@ -25,6 +27,9 @@ import ReactDOM from 'react-dom'
 
 const snakeCase = str => str.split(' ').join('_')
 const desnakeCase = str => str.split('_').join(' ')
+
+import LocationFinder from '../../components/location-finder'
+
 
 const LeadingLine = () => (
   <div className='flex-shrink-0'>
@@ -54,8 +59,9 @@ WaypointCircle.propTypes = {
   isEnd: PropTypes.bool
 }
 
-const StationCard = ({ trailDef, stationIndex, wasVisited }) => {
-  const stationSlug = snakeCase(trailDef.stations[stationIndex])
+
+const StationCard = ({ trailDef, stationIndex, wasVisited, onClick }) => {
+  const stationSlug = snakeCase(trailDef.stations[stationIndex].name)
 
   return (
     <div className='mt2 relative flex items-stretch flex-shrink-0'>
@@ -63,33 +69,43 @@ const StationCard = ({ trailDef, stationIndex, wasVisited }) => {
         <div className='bl b--moon-gray' />
       </div>
       <div className='fl w-80 pv1'>
-        <div className='br4 cust-shadow-3 pb4 relative'>
-          <div className='pt2 pl3 pr1'>
-            <div className='moon-gray f7 fw6 lh-copy'>
-              STATION {romanize(stationIndex + 1)}
+        <div className='br4 cust-shadow-3 relative overflow-hidden'>
+          <ButtonBase onClick={onClick}>
+            <div className='tl pb4'>
+              <div className='pt2 pl3 pr1'>
+                <div className='moon-gray f7 fw6 lh-copy'>
+                  STATION {romanize(stationIndex + 1)}
+                </div>
+                <div className='gray f6 fw6 lh-copy'>
+                  {trailDef.stations[stationIndex].name}
+                </div>
+              </div>
+              <img className='w-100 mb3' src={`/assets/trails/${snakeCase(trailDef.name)}/${stationSlug}/${stationSlug}.jpg`} />
+              <div
+                className={
+                  'absolute w2 h2 bottom-2 right-1 br-100 ba content-box cust-shadow-3 flex items-center justify-center ' +
+                  (wasVisited ? 'bg-buds-yolk b--buds-yolk' : 'bg-white bw1 b--gray')
+                }
+              >
+                {wasVisited ? (
+                  <CheckIcon nativeColor='white' />
+                ) : (
+                  <CloseIcon nativeColor='#777' />
+                )}
+              </div>
             </div>
-            <div className='gray f6 fw6 lh-copy'>
-              {trailDef.stations[stationIndex]}
-            </div>
-          </div>
-          {/*<img className='w-100 mb3' src='/home-bg.jpg' />*/}
-          <img className='w-100 mb3' src={`/assets/trails/${snakeCase(trailDef.name)}/${stationSlug}/${stationSlug}.jpg`} />
-          <div
-            className={
-              'absolute w2 h2 bottom-2 right-1 br-100 ba content-box cust-shadow-3 flex items-center justify-center ' +
-              (wasVisited ? 'bg-buds-yolk b--buds-yolk' : 'bg-white bw1 b--gray')
-            }
-          >
-            {wasVisited ? (
-              <CheckIcon nativeColor='white' />
-            ) : (
-              <CloseIcon nativeColor='#777' />
-            )}
-          </div>
+          </ButtonBase>
         </div>
       </div>
     </div>
   )
+}
+
+StationCard.propTypes = {
+  trailDef: PropTypes.object.isRequired,
+  stationIndex: PropTypes.number.isRequired,
+  wasVisited: PropTypes.bool.isRequired,
+  onClick: PropTypes.func
 }
 
 class Station extends Component {
@@ -97,20 +113,30 @@ class Station extends Component {
     super(...arguments)
     this.state = {
       doShowFeedback: false,
-      doShowCharter: false
+      visiblePopPanel: null,
+      finderStationIdx: 0
     }
   }
 
   componentDidMount () {
-    setTimeout(() => {
-      this.setState({
-        doShowFeedback: true
-      })
-    }, 1e4)
+    const { trailName, stationName } = this.props.match.params
+
+    //check for local storage of feedback groups
+    this.taggedFeedbackGroups = localStorage.getItem('feedbackGroups') ? JSON.parse(localStorage.getItem('feedbackGroups')) : []
+    this.feedbackGroupName = stationFeedbackMap[`${desnakeCase(trailName)}/${desnakeCase(stationName)}`]
+    
+    // if feedback for the current QR code location has not been obtained
+    if(!this.taggedFeedbackGroups.includes(this.feedbackGroupName)) {
+
+      setTimeout(() => {
+        this.setState({
+          doShowFeedback: true
+        })
+      }, 1e4)
+    }
 
     setTimeout(() => {
       const userIdentifier = localStorage.getItem('anonId')
-      const { trailName, stationName } = this.props.match.params
       Meteor.call(`${collectionName}.checkIn`, userIdentifier, desnakeCase(trailName), desnakeCase(stationName), err => {
         if (err) {
           console.error('Could not check in to station', err.error)
@@ -118,10 +144,19 @@ class Station extends Component {
       })
     }, 500)
   }
+  
+  handleFeedbackDone = () => {
+    this.setState({ doShowFeedback: false })
+    
+    // Only "tagging" the current group after the user actively submitted feedback
+    this.taggedFeedbackGroups.push(this.feedbackGroupName)
+    localStorage.setItem('feedbackGroups', JSON.stringify(this.taggedFeedbackGroups))
+  }
+  
   showCharter = (doShow) => () => {
     setTimeout(() => {
       this.setState({
-        doShowCharter: doShow
+        visiblePopPanel: doShow ? 'charter' : null
       })
     }, 200)
   }
@@ -157,7 +192,7 @@ class Station extends Component {
   render () {
     const { match, history, punchcards } = this.props
     const { trailName, stationName } = match.params
-    const { doShowFeedback, doShowCharter } = this.state
+    const { doShowFeedback, visiblePopPanel, finderStationIdx } = this.state
     const trailNameDesnaked = desnakeCase(trailName)
     const stationNameDesnaked = desnakeCase(stationName)
     const trailDef = trailsDefs.find(def => def.name === trailNameDesnaked)
@@ -186,8 +221,17 @@ class Station extends Component {
               <div key={2} className='flex flex-column pt2 pl4 bg-white overflow-auto pb7' >
                 <LeadingLine />
                 {_.flatten(trailDef.stations.map((thisStation, index) => [
-                  <WaypointCircle key={'waypoint ' + index} isActive={thisStation === stationNameDesnaked} />,
-                  <StationCard key={'card ' + index} trailDef={trailDef} stationIndex={index} wasVisited={checkedStations.includes(thisStation)} />
+                  <WaypointCircle key={'waypoint ' + index} isActive={thisStation.name === stationNameDesnaked} />,
+                  <StationCard
+                    key={'card ' + index}
+                    trailDef={trailDef}
+                    stationIndex={index}
+                    wasVisited={checkedStations.includes(thisStation.name)}
+                    onClick={() => this.setState({
+                      visiblePopPanel: 'finder',
+                      finderStationIdx: index
+                    })}
+                  />
                 ]))}
                 <WaypointCircle isEnd />
               </div>
@@ -206,15 +250,25 @@ class Station extends Component {
           </div>
         </div>
         <StationCharter
-          show={doShowCharter && !doShowFeedback}
+          show={visiblePopPanel === 'charter' && !doShowFeedback}
           punchcards={punchcards}
           currTrailName={trailNameDesnaked}
           onClose={this.showCharter(false)}
         />
+        <LocationFinder
+          show={visiblePopPanel === 'finder' && !doShowFeedback}
+          onClose={() => {
+            setTimeout(() => {
+              this.setState({ visiblePopPanel: null })
+            }, 200)
+          }}
+          trailDef={trailDef}
+          stationIndex={finderStationIdx}
+        />
         <FeedbackPanel
           roomName={`${trailName}->${stationName}`}
           doShowFeedback={doShowFeedback}
-          onFeedbackDone={() => this.setState({ doShowFeedback: false })}
+          onFeedbackDone={this.handleFeedbackDone}
         />
       </SiteTabbedLayout>
     )
