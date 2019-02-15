@@ -21,7 +21,6 @@ import StationCharter from '../../components/station-charter'
 import EnergyChart from "../../visualisations/energy.js"
 import LocationFinder from '../../components/location-finder'
 
-
 const LeadingLine = () => (
   <div className='flex-shrink-0'>
     <div className='fl w-10 flex justify-center'>
@@ -50,10 +49,8 @@ WaypointCircle.propTypes = {
   isEnd: PropTypes.bool
 }
 
-
 const StationCard = ({ trailDef, stationIndex, wasVisited, onClick }) => {
   const stationSlug = snakeCase(trailDef.stations[stationIndex].name)
-
   return (
     <div className='mt2 relative flex items-stretch flex-shrink-0'>
       <div className='fl w-10 flex justify-center relative'>
@@ -157,22 +154,17 @@ class Station extends Component {
   renderContent() {
     const { match, history, punchcards } = this.props
     const { trailName, stationName } = match.params
-
     // TODO: Make this a list to add new visualisations in the future
     if(stationName === "NET_ZERO_ENERGY_TRAIL" && trailName ==="NET_ZERO_ENERGY_TRAIL"){
       return(
         <EnergyChart key = {1} />
         )
-
     }
     else {
       return(
       <InfoTab key={1} contentUrl={`/assets/trails/${trailName}/${stationName}/${stationName}.html`} />
       )
     }
-
-    
-
   }
 
   render () {
@@ -187,7 +179,6 @@ class Station extends Component {
     const checkedStations = currPunchcard ? currPunchcard.stations : []
     return (
       <SiteTabbedLayout
-
         title={trailDef.name}
         baseUrl={match.url}
         tabDefs={[
