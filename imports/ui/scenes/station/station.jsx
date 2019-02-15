@@ -163,11 +163,8 @@ class Station extends Component {
     const { match, history, punchcards } = this.props
     const { trailName, stationName } = match.params
 
-    var el = ReactDOM.findDOMNode(this)
-    console.log(el)
-    //<iframe key = {1} height = "400" src = "http://www.budslab.org/visual-analytics-project/"> </iframe>
-
-    if(true){
+    // TODO: Make this a list to add new visualisations in the future
+    if(stationName === "NET_ZERO_ENERGY_TRAIL" && trailName ==="NET_ZERO_ENERGY_TRAIL"){
       return(
         <EnergyChart key = {1} />
         )
