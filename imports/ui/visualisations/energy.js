@@ -15,6 +15,7 @@ class EnergyChart extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      contentLoaded: true,
 
     }
   };
@@ -190,6 +191,7 @@ class EnergyChart extends Component {
     }
 
   }
+
 
 
 // Activate Function 0
@@ -429,7 +431,6 @@ var showFirst = function(){
 
    // Set the cart to activate and launch the corresponding activation functions
    chart.activate = function(index){
-    console.log(index)
     activeIndex = index;
     var sign = (activeIndex - lastIndex)< 0? -1: 1;
     var scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
@@ -471,20 +472,43 @@ display(data){
     plot.update(index, progress);
   })
 
+  return(plot)
+
 }
 
 
 componentDidMount() {
-  console.log(this.refs.scrollWindow)
 
   var scrollWindow = this.refs.scrollWindow
-  this.display()
+  this.state.plot = this.display()
 
 }
 
+// This could probably be cleaned up a bit
+  handleScroll = (e) => {
+  //get plot we are working with
+  var plot = this.state.plot
+  //get scroller function
+  var scroll = this.scroller(this.refs.scrollWindow)
+  .container(d3.select('#graphic'));
 
-  //Scroller App Functions from now on. I'm pretty clueless
+  //get steps
+  scroll(d3.selectAll('.step'))
+
+  //activate steps on scroll
+  scroll.on('active', function (index){
+    d3.selectAll('.step')
+    .style('opacity', function(d,i) {return i === index ? 1: 0.1;
+    });
+    //activate plot on scroll
+    plot.activate(index)
+  })
+  }
+
+
+  //Scroller App Functions from now on. 
   scroller(scrollWindow) {
+    this.state.runposition = false
     var container = d3.select('body');
     // event dispatcher
     var dispatch = d3.dispatch('active', 'progress');
@@ -498,9 +522,11 @@ componentDidMount() {
     // y coordinate of each section
     // that is scrolled through
     var sectionPositions = [];
+    
     var currentIndex = -1;
     // y coordinate of
     var containerStart = 0;
+
 
 
 
@@ -521,10 +547,7 @@ componentDidMount() {
         // when window is scrolled call
         // position. When it is resized
         // call resize.
-        console.log(scrollWindow)
-        scrollWindow.addEventListener('scroll', function(e) {
-          console.log("window position is " + window.scrollY);
-         });
+
         d3.select(ReactDOM.findDOMNode(this))
         .on('scroll.scroller', position)
         .on('resize.scroller', resize);
@@ -566,6 +589,7 @@ componentDidMount() {
           }
           sectionPositions.push(top - startPos);
         });
+
         containerStart = container.node().getBoundingClientRect().top + window.pageYOffset;
       }
 
@@ -578,7 +602,6 @@ componentDidMount() {
      */
      function position() {
       var pos = window.pageYOffset - 10 - containerStart;
-      console.log("working position is" + pos)
       var sectionIndex = d3.bisect(sectionPositions, pos);
       sectionIndex = Math.min(sections.size() - 1, sectionIndex);
 
@@ -623,14 +646,16 @@ componentDidMount() {
 
   render(){
   	return(
-     <div ref = "scrollWindow" >	
-      <div id ="graphic" onScroll = {console.log("Scroller is working properly")}>
+    <div className='flex-grow-1 pb3 ph2 bg-white dark-gray flex flex-column'>
+    {this.state.contentLoaded && (
+     <div ref = "scrollWindow" className='flex-grow-1 flex flex-column overflow-auto' onScroll={this.handleScroll} >	
+      <div id ="graphic" >
         <div id = "sections" className = "relative dib w-25 z-90" >
-          <section className = "step mb7" >
-            <div className = "b">
+          <section className = "step mb7"  >
+            <div className = "b" >
               Reference Building
             </div>
-            <div className = "">
+            <div className = "" >
             
             </div>
           </section>
@@ -689,10 +714,12 @@ componentDidMount() {
             </div>
           </section>
         </div>
-        <div id="vis" className = "dib fixed top-6 z-1 ml-0 h5 w-70">
+        <div id="vis" className = "dib fixed top-6 z-1 ml-0 h5 w-70" >
         </div>
       </div>
-      <div className = "pb7"> r</div>
+      <div className = "pb7" > </div>
+     </div>
+     )}
      </div>
      );
   };

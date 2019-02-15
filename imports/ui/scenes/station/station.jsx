@@ -24,10 +24,6 @@ import EnergyChart from "../../visualisations/energy.js"
 
 import ReactDOM from 'react-dom'
 
-
-const snakeCase = str => str.split(' ').join('_')
-const desnakeCase = str => str.split('_').join(' ')
-
 import LocationFinder from '../../components/location-finder'
 
 
@@ -172,10 +168,8 @@ class Station extends Component {
     //<iframe key = {1} height = "400" src = "http://www.budslab.org/visual-analytics-project/"> </iframe>
 
     if(true){
-      ReactDOM.createPortal(
-        <EnergyChart key = {1} onScroll={console.log("Energy chart element scrolling")} />,
-        el
-        
+      return(
+        <EnergyChart key = {1} />
         )
 
     }
