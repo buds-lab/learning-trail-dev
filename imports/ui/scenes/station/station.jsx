@@ -18,9 +18,7 @@ import { trailsDefs, stationFeedbackMap } from '/imports/config/trails'
 import StationPunchcards, { collectionName } from '/imports/api/station-punchcards'
 import { romanize, desnakeCase, snakeCase } from '/imports/util/formatters'
 import StationCharter from '../../components/station-charter'
-
 import EnergyChart from "../../visualisations/energy.js"
-
 import LocationFinder from '../../components/location-finder'
 
 
