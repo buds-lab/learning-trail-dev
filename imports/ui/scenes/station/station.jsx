@@ -19,10 +19,7 @@ import StationPunchcards, { collectionName } from '/imports/api/station-punchcar
 import { romanize, desnakeCase, snakeCase } from '/imports/util/formatters'
 import StationCharter from '../../components/station-charter'
 
-
 import EnergyChart from "../../visualisations/energy.js"
-
-import ReactDOM from 'react-dom'
 
 import LocationFinder from '../../components/location-finder'
 
