@@ -23,6 +23,19 @@ The 7 primary info point categories would also act as the basis for information,
 This will be a showcase of nano climate structures and digital installations for the launch. The scope for this is still to be decided.
 
 ![alt text](https://github.com/buds-lab/learning_trail_dev/blob/master/Graphic-01.jpg)
+
+## Deployment
+Spacematch uses "Meteor UP" to handle its deployments- A CLI tool that builds and packages the app locally, then uploads and deploys it onto an AWS EC2 instance.
+
+### Deployment initial prep
+1. Install node.js if you don't have it installed yet: https://nodejs.org/en/download/
+2. Install Meteor UP's 'mup' CLI tool by running `npm install --global mup`
+3. Copy the 'spacematchssh.pem' ssh key file (request it from anyone in the team, it shouldn't be shared publicly) to `<your home folder>/.ssh/`
+
+### Continuous deployment
+0. Make sure you are **only deploying from 'master'** and you have **pulled the latest code into your local cloned repo**.
+1. Go to the '.deploy' folder under this project: `cd <project root>/.deploy`
+2. Deploy the project with `mup deploy`
       
 
 
