@@ -18,6 +18,7 @@ import { trailsDefs, stationFeedbackMap } from '/imports/config/trails'
 import StationPunchcards, { collectionName } from '/imports/api/station-punchcards'
 import { romanize, desnakeCase, snakeCase } from '/imports/util/formatters'
 import StationCharter from '../../components/station-charter'
+import EnergyChart from "../../visualisations/energy.js"
 import LocationFinder from '../../components/location-finder'
 
 const LeadingLine = () => (
@@ -147,6 +148,25 @@ class Station extends Component {
       })
     }, 200)
   }
+
+
+
+  renderContent() {
+    const { match, history, punchcards } = this.props
+    const { trailName, stationName } = match.params
+    // TODO: Make this a list to add new visualisations in the future
+    if(stationName === "NET_ZERO_ENERGY_TRAIL" && trailName ==="NET_ZERO_ENERGY_TRAIL"){
+      return(
+        <EnergyChart key = {1} />
+        )
+    }
+    else {
+      return(
+      <InfoTab key={1} contentUrl={`/assets/trails/${trailName}/${stationName}/${stationName}.html`} />
+      )
+    }
+  }
+
   render () {
     const { match, history, punchcards } = this.props
     const { trailName, stationName } = match.params
@@ -167,7 +187,7 @@ class Station extends Component {
             label: 'STATION',
             iconEl: <InfoOutlineIcon />,
             tabEl: (
-              <InfoTab key={1} contentUrl={`/assets/trails/${trailName}/${stationName}/${stationName}.html`} />
+              this.renderContent()
             )
           },
           {
@@ -175,7 +195,7 @@ class Station extends Component {
             label: 'TRAIL',
             iconEl: <NearMeIcon />,
             tabEl: (
-              <div key={2} className='flex flex-column pt2 pl4 bg-white overflow-auto pb7'>
+              <div key={2} className='flex flex-column pt2 pl4 bg-white overflow-auto pb7' >
                 <LeadingLine />
                 {_.flatten(trailDef.stations.map((thisStation, index) => [
                   <WaypointCircle key={'waypoint ' + index} isActive={thisStation.name === stationNameDesnaked} />,
